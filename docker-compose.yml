@@ -1,0 +1,56 @@
+version: "3.8"
+
+services:
+  api:
+    build:
+      context: ./Compromise-Vault-Backend-main/apps/api
+      dockerfile: Dockerfile
+    container_name: compromise-vault-api
+    ports:
+      - "3001:3001"
+    environment:
+      - APP_ENV=production
+      - APP_PORT=3001
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/compromise_vault?schema=public
+    volumes:
+      - ./Compromise-Vault-Backend-main/apps/api/assets:/app/assets
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    command: sh -c "npx prisma migrate deploy && npm start"
+
+  web:
+    build:
+      context: ./Compromise-Vault-main/apps/web
+      dockerfile: Dockerfile
+      args:
+        - VITE_APP_URL=http://localhost:80
+        - VITE_API_URL=http://localhost:3001
+    container_name: compromise-vault-web
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  db:
+    image: postgres:14-alpine
+    container_name: compromise-vault-db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=compromise_vault
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
