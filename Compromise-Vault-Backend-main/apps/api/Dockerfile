@@ -1,7 +1,7 @@
 FROM node:18-alpine AS base
 
 # Install necessary dependencies for Prisma
-RUN apk add --no-cache openssl
+RUN apk add --no-cache openssl openssh
 
 WORKDIR /app
 
