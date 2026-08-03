@@ -1,9 +1,8 @@
 /* eslint-disable no-use-before-define */
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { http } from '@utils/axios';
 
-import InfoModal from '../../components/InfoModal';
 import SSHKeyForm from '../../components/SSHKeyForm';
 import DownloadInstructionsModal from '../../components/Instruction';
 
@@ -12,16 +11,7 @@ export const Page = () => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState('');
 	const [success, setSuccess] = useState('');
-	const [showModal, setShowModal] = useState(true);
 	const [showDownloadModal, setShowDownloadModal] = useState(false); 
-
-	const handleCloseModal = () => {
-		setShowModal(false);
-	};
-
-	useEffect(() => {
-		setShowModal(true);
-	}, []);
 
 	const handleFormSubmit = async ({
 		sshPrivKey,
@@ -102,7 +92,6 @@ export const Page = () => {
 				SSH Key Aggregator
 			</h1>
 			<div className="app-container">
-				{showModal && <InfoModal onClose={handleCloseModal} />}
 				{showDownloadModal && <DownloadInstructionsModal onClose={() => setShowDownloadModal(false)} />}
 				<SSHKeyForm onSubmit={handleFormSubmit} externalError={error} />
 			</div>
