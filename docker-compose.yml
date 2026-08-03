@@ -24,9 +24,6 @@ services:
     build:
       context: ./Compromise-Vault-main/apps/web
       dockerfile: Dockerfile
-      args:
-        - VITE_APP_URL=http://localhost:80
-        - VITE_API_URL=http://localhost:3001
     container_name: compromise-vault-web
     ports:
       - "80:80"
